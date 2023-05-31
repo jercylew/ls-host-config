@@ -104,7 +104,6 @@ export class Dashboard extends Component {
     this.inputChangeHandler = this.inputChangeHandler.bind(this);
   }
   statusChangedHandler(event, id) {
-
     //const todoIndex = this.state.todos.findIndex( t => t.id === id );
     const todo = {...this.state.todos[id]};
     todo.isCompleted = event.target.checked;
@@ -262,7 +261,7 @@ export class Dashboard extends Component {
           <h3 className="page-title">
             <span className="page-title-icon bg-gradient-primary text-white mr-2">
               <i className="mdi mdi-home"></i>
-            </span> 主控 </h3>
+            </span> 主页 </h3>
           <nav aria-label="breadcrumb">
             <ul className="breadcrumb">
               <li className="breadcrumb-item active" aria-current="page">
@@ -276,10 +275,10 @@ export class Dashboard extends Component {
             <div className="card bg-gradient-danger card-img-holder text-white">
               <div className="card-body">
                 <img src={require("../../assets/images/dashboard/circle.svg")} className="card-img-absolute" alt="circle" />
-                <h4 className="font-weight-normal mb-3">总场地数<i className="mdi mdi-chart-line mdi-24px float-right"></i>
+                <h4 className="font-weight-normal mb-3">CPU<i className="mdi mdi-chart-line mdi-24px float-right"></i>
                 </h4>
-                <h2 className="mb-5">15,0000</h2>
-                <h6 className="card-text">较上月增长 20%</h6>
+                <h2 className="mb-5">30%</h2>
+                {/* <h6 className="card-text">较上月增长 20%</h6> */}
               </div>
             </div>
           </div>
@@ -287,10 +286,10 @@ export class Dashboard extends Component {
             <div className="card bg-gradient-info card-img-holder text-white">
               <div className="card-body">
                 <img src={require("../../assets/images/dashboard/circle.svg")} className="card-img-absolute" alt="circle" />
-                <h4 className="font-weight-normal mb-3">总主机数<i className="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                <h4 className="font-weight-normal mb-3">内存<i className="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                 </h4>
-                <h2 className="mb-5">45,6334</h2>
-                <h6 className="card-text">较上月增长15%</h6>
+                <h2 className="mb-5">250M/1024M</h2>
+                {/* <h6 className="card-text">较上月增长15%</h6> */}
               </div>
             </div>
           </div>
@@ -298,10 +297,10 @@ export class Dashboard extends Component {
             <div className="card bg-gradient-success card-img-holder text-white">
               <div className="card-body">
                 <img src={require("../../assets/images/dashboard/circle.svg")} className="card-img-absolute" alt="circle" />
-                <h4 className="font-weight-normal mb-3">在线主机<i className="mdi mdi-diamond mdi-24px float-right"></i>
+                <h4 className="font-weight-normal mb-3">网速<i className="mdi mdi-diamond mdi-24px float-right"></i>
                 </h4>
-                <h2 className="mb-5">95,5741</h2>
-                <h6 className="card-text">占总主机比例 75%</h6>
+                <h2 className="mb-5">1.5Mbps/1.8Mbps</h2>
+                {/* <h6 className="card-text">占总主机比例 75%</h6> */}
               </div>
             </div>
           </div>
@@ -311,20 +310,20 @@ export class Dashboard extends Component {
             <div className="card">
               <div className="card-body">
                 <div className="clearfix mb-4">
-                  <h4 className="card-title float-left">访问统计</h4>
+                  <h4 className="card-title float-left">进程</h4>
                   <div id="visit-sale-chart-legend" className="rounded-legend legend-horizontal legend-top-right float-right">
                     <ul>
                       <li>
                         <span className="legend-dots bg-primary">
-                        </span>CHN
+                        </span>TKTMesh
                       </li>
                       <li>
                         <span className="legend-dots bg-danger">
-                        </span>USA
+                        </span>TKTMeshAgent
                       </li>
                       <li>
                         <span className="legend-dots bg-info">
-                        </span>UK
+                        </span>TKTVideoServer
                       </li>
                     </ul>
                   </div>
@@ -336,20 +335,20 @@ export class Dashboard extends Component {
           <div className="col-md-5 grid-margin stretch-card">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">通信流量</h4>
+                <h4 className="card-title">磁盘空间</h4>
                 <Doughnut data={this.state.trafficData} options={this.state.trafficOptions} />
                 <div id="traffic-chart-legend" className="rounded-legend legend-vertical legend-bottom-left pt-4">
                   <ul>
                     <li>
-                      <span className="legend-dots bg-info"></span>Search Engines
+                      <span className="legend-dots bg-info"></span>系统
                       <span className="float-right">30%</span>
                     </li>
                     <li>
-                      <span className="legend-dots bg-success"></span>Direct Click
+                      <span className="legend-dots bg-success"></span>剩余
                       <span className="float-right">30%</span>
                     </li>
                     <li>
-                      <span className="legend-dots bg-danger"></span>Bookmarks Click
+                      <span className="legend-dots bg-danger"></span>应用
                       <span className="float-right">40%</span>
                     </li>
                   </ul>
@@ -362,209 +361,57 @@ export class Dashboard extends Component {
           <div className="col-12 grid-margin">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">工具下载</h4>
+                <h4 className="card-title">设备</h4>
                 <div className="table-responsive">
                   <table className="table">
                     <thead>
                       <tr>
-                        <th> 工具名称 </th>
-                        <th> 简介 </th>
-                        <th> 状态 </th>
-                        <th> 最后更新日期 </th>
-                        <th>  </th>
+                        <th>ID</th>
+                        <th>类型</th>
+                        <th>设备名</th>
+                        <th>状态</th>
+                        <th>数据</th>
+                        <th>最后更新日期</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
+                        {/* <td><img src={require("../../assets/images/faces/face1.jpg")} className="mr-2" alt="face" /> TKTMesh维护工具</td> */}
+                        <td> TEMP.202 </td>
+                        <td> 环境温湿度传感器 </td>
+                        <td> 办公室201温湿度 </td>
                         <td>
-                          <img src={require("../../assets/images/faces/face1.jpg")} className="mr-2" alt="face" /> TKTMesh维护工具 </td>
-                        <td> 传感器状态查看，固件升级，分组，Mesh信息编辑 </td>
-                        <td>
-                          <label className="badge badge-gradient-success">Release版</label>
+                          <label className="badge badge-gradient-success">在线</label>
                         </td>
-                        <td> Dec 5, 2017 </td>
-                        <td> WD-12345 </td>
+                        <td> TEMP: 32.5, HUM: 62% </td>
+                        <td> 2023/05/21 12:30:12.5 </td>
                       </tr>
                       <tr>
                         <td>
-                          <img src={require("../../assets/images/faces/face2.jpg")} className="mr-2" alt="face" /> TKT Mesh配置助手 </td>
-                        <td> Mesh设备的本地河远程配置并下发 </td>
+                          {/* <img src={require("../../assets/images/faces/face2.jpg")} className="mr-2" alt="face" /> */}
+                          CO1.102</td>
+                        <td> 一氧化碳传感器 </td>
+                        <td> 厨房大厅 </td>
                         <td>
-                          <label className="badge badge-gradient-warning">PROGRESS</label>
+                        <label className="badge badge-gradient-danger">离线</label>
                         </td>
-                        <td> Dec 12, 2017 </td>
-                        <td> WD-12346 </td>
+                        <td> CO1: 25ppb </td>
+                        <td> 2023/05/21 12:32:12.5 </td>
                       </tr>
                       <tr>
                         <td>
-                          <img src={require("../../assets/images/faces/face3.jpg")} className="mr-2" alt="face" /> TKT Mesh配置APP </td>
-                        <td> TKT Mesh维护的Android App </td>
+                          {/* <img src={require("../../assets/images/faces/face3.jpg")} className="mr-2" alt="face" /> */}
+                          CUR.101 </td>
+                        <td> 电流传感器 </td>
+                        <td> 厨房冰箱线路 </td>
                         <td>
-                          <label className="badge badge-gradient-info">ON HOLD</label>
+                          <label className="badge badge-gradient-success">在线</label>
                         </td>
-                        <td> Dec 16, 2017 </td>
-                        <td> WD-12347 </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <img src={require("../../assets/images/faces/face4.jpg")} className="mr-2" alt="face" /> John Doe </td>
-                        <td> Loosing control on server </td>
-                        <td>
-                          <label className="badge badge-gradient-danger">REJECTED</label>
-                        </td>
-                        <td> Dec 3, 2017 </td>
-                        <td> WD-12348 </td>
+                        <td> CURRENT: 1.2A </td>
+                        <td> 2023/05/21 12:31:23.5 </td>
                       </tr>
                     </tbody>
                   </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-5 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body p-0 d-flex">
-                <div className="dashboard-custom-date-picker">
-                  <DatePicker inline selected={this.state.startDate}  onChange={this.handleChange}/>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-7 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title">Recent Updates</h4>
-                <div className="d-flex">
-                  <div className="d-flex align-items-center mr-4 text-muted font-weight-light">
-                    <i className="mdi mdi-account-outline icon-sm mr-2"></i>
-                    <span>jack Menqu</span>
-                  </div>
-                  <div className="d-flex align-items-center text-muted font-weight-light">
-                    <i className="mdi mdi-clock icon-sm mr-2"></i>
-                    <span>October 3rd, 2018</span>
-                  </div>
-                </div>
-                <div className="row mt-3">
-                  <div className="col-6 pr-1">
-                    <img src={require("../../assets/images/dashboard/img_1.jpg")} className="mb-2 mw-100 w-100 rounded" alt="face" />
-                    <img src={require("../../assets/images/dashboard/img_4.jpg")} className="mw-100 w-100 rounded" alt="face" />
-                  </div>
-                  <div className="col-6 pl-1">
-                    <img src={require("../../assets/images/dashboard/img_2.jpg")} className="mb-2 mw-100 w-100 rounded" alt="face" />
-                    <img src={require("../../assets/images/dashboard/img_3.jpg")} className="mw-100 w-100 rounded" alt="face "/>
-                  </div>
-                </div>
-                <div className="d-flex mt-5 align-items-start">
-                  <img src={require("../../assets/images/faces/face3.jpg")} className="img-sm rounded-circle mr-3" alt="face" />
-                  <div className="mb-0 flex-grow">
-                    <h5 className="mr-2 mb-2">School Website - Authentication Module.</h5>
-                    <p className="mb-0 font-weight-light">It is a long established fact that a reader will be distracted by the readable content of a page.</p>
-                  </div>
-                  <div className="ml-auto">
-                    <i className="mdi mdi-heart-outline text-muted"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-xl-7 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title">Project Status</h4>
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th> # </th>
-                        <th> Name </th>
-                        <th> Due Date </th>
-                        <th> Progress </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td> 1 </td>
-                        <td> Herman Beck </td>
-                        <td> May 15, 2015 </td>
-                        <td>
-                          <ProgressBar variant="gradient-success" now={25}/>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td> 2 </td>
-                        <td> Messsy Adam </td>
-                        <td> Jul 01, 2015 </td>
-                        <td>
-                        <ProgressBar variant="gradient-danger" now={75}/>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td> 3 </td>
-                        <td> John Richards </td>
-                        <td> Apr 12, 2015 </td>
-                        <td>
-                        <ProgressBar variant="gradient-warning" now={90}/>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td> 4 </td>
-                        <td> Peter Meggik </td>
-                        <td> May 15, 2015 </td>
-                        <td>
-                        <ProgressBar variant="gradient-primary" now={50}/>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td> 5 </td>
-                        <td> Edward </td>
-                        <td> May 03, 2015 </td>
-                        <td>
-                        <ProgressBar variant="gradient-danger" now={50}/>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td> 5 </td>
-                        <td> Ronald </td>
-                        <td> Jun 05, 2015 </td>
-                        <td>
-                        <ProgressBar variant="gradient-info" now={65}/>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-xl-5 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title text-white">Todo</h4>
-                <form  className="add-items d-flex" onSubmit={this.addTodo}>
-                  <input 
-                      type="text" 
-                      className="form-control h-auto" 
-                      placeholder="What do you need to do today?" 
-                      value={this.state.inputValue} 
-                      onChange={this.inputChangeHandler}
-                      required />
-                  <button type="submit" className="btn btn-gradient-primary font-weight-bold px-lg-4 px-3">Add</button>
-                </form>
-                <div className="list-wrapper">
-                    <ul className="d-flex flex-column todo-list">
-                        {this.state.todos.map((todo, index) =>{
-                            return <ListItem 
-                            isCompleted={todo.isCompleted}
-                            changed={(event) => this.statusChangedHandler(event, index)}
-                            key={todo.id}
-                            remove={() => this.removeTodo(index) }
-                            >{todo.task}</ListItem>
-                        })}
-                    </ul>
                 </div>
               </div>
             </div>

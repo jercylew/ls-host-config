@@ -35,23 +35,11 @@ class Sidebar extends Component {
     });
 
     const dropdownPaths = [
-      { path: `/${urlPrefix}/apps`, state: 'appsMenuOpen' },
-      { path: `/${urlPrefix}/basic-ui`, state: 'basicUiMenuOpen' },
-      { path: `/${urlPrefix}/advanced-ui`, state: 'advancedUiMenuOpen' },
-      { path: `/${urlPrefix}/form-elements`, state: 'formElementsMenuOpen' },
-      { path: `/${urlPrefix}/tables`, state: 'tablesMenuOpen' },
-      { path: `/${urlPrefix}/maps`, state: 'mapsMenuOpen' },
-      { path: `/${urlPrefix}/icons`, state: 'iconsMenuOpen' },
-      { path: `/${urlPrefix}/charts`, state: 'chartsMenuOpen' },
-      { path: `/${urlPrefix}/user-pages`, state: 'userPagesMenuOpen' },
-      { path: `/${urlPrefix}/error-pages`, state: 'errorPagesMenuOpen' },
-      { path: `/${urlPrefix}/general-pages`, state: 'generalPagesMenuOpen' },
-      { path: `/${urlPrefix}/ecommerce`, state: 'ecommercePagesMenuOpen' },
-
+      { path: `/${urlPrefix}/dashboard`, state: 'dashboardPagesMenuOpen' },      
       { path: `/${urlPrefix}/scene`, state: 'scenePagesMenuOpen' },
-      { path: `/${urlPrefix}/config-helper`, state: 'confhelperPagesMenuOpen' },
-      { path: `/${urlPrefix}/demo`, state: 'demoPagesMenuOpen' },
-      { path: `/${urlPrefix}/settings`, state: 'settingsPagesMenuOpen' },
+      { path: `/${urlPrefix}/electric-monitor`, state: 'electricMonitorPagesMenuOpen' },
+      { path: `/${urlPrefix}/ble-mesh`, state: 'bleMeshPagesMenuOpen' },
+      { path: `/${urlPrefix}/system`, state: 'systemPagesMenuOpen' },
     ];
 
     dropdownPaths.forEach((obj => {
@@ -59,7 +47,6 @@ class Sidebar extends Component {
         this.setState({ [obj.state]: true })
       }
     }));
-
   }
 
   render() {
@@ -73,143 +60,66 @@ class Sidebar extends Component {
                 <span className="login-status online"></span> {/* change to offline or busy as needed */}
               </div>
               <div className="nav-profile-text">
-                <span className="font-weight-bold mb-2"><Trans>测试用户</Trans></span>
-                <span className="text-secondary text-small"><Trans>Project Manager</Trans></span>
+                <span className="font-weight-bold mb-2"><Trans>操作员</Trans></span>
+                {/* <span className="text-secondary text-small"><Trans>Project Manager</Trans></span> */}
               </div>
               <i className="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
             </a>
           </li>
           <li className={this.isPathActive(`/${urlPrefix}/dashboard`) ? 'nav-item active' : 'nav-item'}>
             <Link className="nav-link" to={`/${urlPrefix}/dashboard`}>
-              <span className="menu-title"><Trans>主控</Trans></span>
+              <span className="menu-title"><Trans>主页</Trans></span>
               <i className="mdi mdi-home menu-icon"></i>
             </Link>
           </li>
           <li className={this.isPathActive(`/${urlPrefix}/scene`) ? 'nav-item active' : 'nav-item'}>
             <Link className="nav-link" to={`/${urlPrefix}/scene`}>
-              <span className="menu-title"><Trans>场地管理</Trans></span>
+              <span className="menu-title"><Trans>场地设置</Trans></span>
               <i className="mdi mdi-settings menu-icon"></i>
             </Link>
           </li>
-          <li className={this.isPathActive(`/${urlPrefix}/demo`) ? 'nav-item active' : 'nav-item'}>
-            <div className={this.state.demoPagesMenuOpen ? 'nav-link menu-expanded' : 'nav-link'}
-              onClick={() => this.toggleMenuState('demoPagesMenuOpen')} data-toggle="collapse">
-              <span className="menu-title"><Trans>演示</Trans></span>
+          <li className={this.isPathActive(`/${urlPrefix}/electric-monitor`) ? 'nav-item active' : 'nav-item'}>
+            <Link className="nav-link" to={`/${urlPrefix}/electric-monitor`}>
+              <span className="menu-title"><Trans>电箱设置</Trans></span>
+              <i className="mdi mdi-settings menu-icon"></i>
+            </Link>
+          </li>
+          <li className={this.isPathActive(`/${urlPrefix}/ble-mesh`) ? 'nav-item active' : 'nav-item'}>
+            <div className={this.state.bleMeshPagesMenuOpen ? 'nav-link menu-expanded' : 'nav-link'}
+              onClick={() => this.toggleMenuState('bleMeshPagesMenuOpen')} data-toggle="collapse">
+              <span className="menu-title"><Trans>蓝牙Mesh配置助手</Trans></span>
               <i className="menu-arrow"></i>
               <i className="mdi mdi-chart-bar menu-icon"></i>
             </div>
-            <Collapse in={this.state.demoPagesMenuOpen}>
+            <Collapse in={this.state.bleMeshPagesMenuOpen}>
               <ul className="nav flex-column sub-menu">
                 <li className="nav-item">
-                  <Link className={this.isPathActive(`/${urlPrefix}/demo/current`) ? 'nav-link active' : 'nav-link'}
-                    to={`/${urlPrefix}/demo/current`}>
-                    <Trans>电流</Trans>
+                  <Link className={this.isPathActive(`/${urlPrefix}/ble-mesh/overview`) ? 'nav-link active' : 'nav-link'}
+                    to={`/${urlPrefix}/ble-mesh/overview`}>
+                    <Trans>总览</Trans>
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className={this.isPathActive(`/${urlPrefix}/demo/smart-meter`) ? 'nav-link active' : 'nav-link'}
-                    to={`/${urlPrefix}/demo/smart-meter`}>
-                    <Trans>智能电表</Trans>
+                  <Link className={this.isPathActive(`/${urlPrefix}/ble-mesh/mesh`) ? 'nav-link active' : 'nav-link'}
+                    to={`/${urlPrefix}/ble-mesh/mesh`}>
+                    <Trans>Mesh信息</Trans>
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className={this.isPathActive(`/${urlPrefix}/demo/voltameter`) ? 'nav-link active' : 'nav-link'}
-                    to={`/${urlPrefix}/demo/voltameter`}>
-                    <Trans>智能电能质量仪</Trans>
+                  <Link className={this.isPathActive(`/${urlPrefix}/ble-mesh/advanced`) ? 'nav-link active' : 'nav-link'}
+                    to={`/${urlPrefix}/ble-mesh/advanced`}>
+                    <Trans>高级功能</Trans>
                   </Link>
                 </li>
               </ul>
             </Collapse>
           </li>
-          <li className={this.isPathActive(`/${urlPrefix}/settings`) ? 'nav-item active' : 'nav-item'}>
-            <Link className="nav-link" to={`/${urlPrefix}/settings`}>
-              <span className="menu-title"><Trans>设置</Trans></span>
+          <li className={this.isPathActive(`/${urlPrefix}/system`) ? 'nav-item active' : 'nav-item'}>
+            <Link className="nav-link" to={`/${urlPrefix}/system`}>
+              <span className="menu-title"><Trans>系统设置</Trans></span>
               <i className="mdi mdi-settings menu-icon"></i>
             </Link>
           </li>
-          {/* <li className={ this.isPathActive('/basic-ui') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.basicUiMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('basicUiMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>Basic UI Elements</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-crosshairs-gps menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.basicUiMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/basic-ui/buttons') ? 'nav-link active' : 'nav-link' } to="/basic-ui/buttons"><Trans>Buttons</Trans></Link></li>
-                <li className="nav-item"> <Link className={ this.isPathActive('/basic-ui/dropdowns') ? 'nav-link active' : 'nav-link' } to="/basic-ui/dropdowns"><Trans>Dropdowns</Trans></Link></li>
-                <li className="nav-item"> <Link className={ this.isPathActive('/basic-ui/typography') ? 'nav-link active' : 'nav-link' } to="/basic-ui/typography"><Trans>Typography</Trans></Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className={ this.isPathActive('/form-elements') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.formElementsMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('formElementsMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>Form Elements</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-format-list-bulleted menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.formElementsMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/form-elements/basic-elements') ? 'nav-link active' : 'nav-link' } to="/form-elements/basic-elements"><Trans>Basic Elements</Trans></Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className={ this.isPathActive('/tables') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.tablesMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('tablesMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>Tables</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-table-large menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.tablesMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/tables/basic-table') ? 'nav-link active' : 'nav-link' } to="/tables/basic-table"><Trans>Basic Table</Trans></Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className={ this.isPathActive('/icons') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.iconsMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('iconsMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>Icons</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-contacts menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.iconsMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/icons/mdi') ? 'nav-link active' : 'nav-link' } to="/icons/mdi"><Trans>Material</Trans></Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className={ this.isPathActive('/user-pages') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.userPagesMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('userPagesMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>User Pages</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-lock menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.userPagesMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/user-pages/login-1') ? 'nav-link active' : 'nav-link' } to="/user-pages/login-1"><Trans>Login</Trans></Link></li>
-                <li className="nav-item"> <Link className={ this.isPathActive('/user-pages/register-1') ? 'nav-link active' : 'nav-link' } to="/user-pages/register-1"><Trans>Register</Trans></Link></li>
-                <li className="nav-item"> <Link className={ this.isPathActive('/user-pages/lockscreen') ? 'nav-link active' : 'nav-link' } to="/user-pages/lockscreen"><Trans>Lockscreen</Trans></Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className={ this.isPathActive('/error-pages') ? 'nav-item active' : 'nav-item' }>
-            <div className={ this.state.errorPagesMenuOpen ? 'nav-link menu-expanded' : 'nav-link' } onClick={ () => this.toggleMenuState('errorPagesMenuOpen') } data-toggle="collapse">
-              <span className="menu-title"><Trans>Error Pages</Trans></span>
-              <i className="menu-arrow"></i>
-              <i className="mdi mdi-security menu-icon"></i>
-            </div>
-            <Collapse in={ this.state.errorPagesMenuOpen }>
-              <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <Link className={ this.isPathActive('/error-pages/error-404') ? 'nav-link active' : 'nav-link' } to="/error-pages/error-404">404</Link></li>
-                <li className="nav-item"> <Link className={ this.isPathActive('/error-pages/error-500') ? 'nav-link active' : 'nav-link' } to="/error-pages/error-500">500</Link></li>
-              </ul>
-            </Collapse>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="http://bootstrapdash.com/demo/purple-react-free/documentation/documentation.html" rel="noopener noreferrer" target="_blank">
-              <span className="menu-title"><Trans>Documentation</Trans></span>
-              <i className="mdi mdi-file-document-box menu-icon"></i>
-            </a>
-          </li> */}
         </ul>
       </nav>
     );

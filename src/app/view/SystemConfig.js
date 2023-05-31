@@ -48,7 +48,7 @@ const cameraManufactureToText = manufacture => {
 };
 
 const urlPrefix = HomeUrlPrefix();
-export default function SceneConfig() {
+export default function SystemConfig() {
     const query = useQuery();
 
     const [userId, setUserId] = useState('');
@@ -59,21 +59,25 @@ export default function SceneConfig() {
 
     const [timeShieldCmdMS, setTimeShieldCmdMS] = useState(500);
     const [timeIntervalDataReportS, setTimeIntervalDataReportS] = useState(10);
-    const [dataLogKeepDays, setDataLogKeepDays] = useState(10);
+    const [systemRebootIntervalHour, setSystemRebootIntervalHour] = useState(24);
     const [mqttLogKeepDays, setMqttLogKeepDays] = useState(7);
     const [autoRebootWhenGatewayOff, setAutoRebootWhenGatewayOff] = useState(true);
 
     const [hostIP, setHostIP] = useState('');
     const [defaultGateway, setDefaultGateway] = useState('');
-    const [mask, setMask] = useState('');
-    const [dns, setDns] = useState('');
+    const [mask, setMask] = useState('255.255.255.0');
+    const [dns, setDns] = useState('114.114.114.114,8.8.8.8');
 
     const [rtspSourceType, setRtspSourceType] = useState(RtspSourceType.VideoRecorder);
     const [cameraManufacture, setCameraManufacture] = useState(CameraManufacture.HikVision);
     const [channelIDPrefix, setChannelIDPrefix] = useState('jiulong_scene');
+
+    const [shellCmd, setShellCmd] = useState('');
     const [videoRecorderIP, setVideoRecorderIP] = useState('');
     const [rtspUserName, setRtspUserName] = useState('admin');
     const [rtspPassword, setRtspPassword] = useState('admin123');
+    const [loginUserName, setLoginUserName] = useState('linaro');
+    const [loginPassword, setLoginPassword] = useState('admin123');
     const [rtspChannels, setRtspChannels] = useState('');
     const [cameraIP, setCameraIP] = useState('');
     const [cameraUserName, setCameraUserName] = useState('');
@@ -87,8 +91,8 @@ export default function SceneConfig() {
         setTimeIntervalDataReportS(parseInt(event.target.value));
     };
 
-    const handleDataLogKeepDaysChange = event => {
-        setDataLogKeepDays(parseInt(event.target.value));
+    const handleSystemRebootIntervalHourChange = event => {
+        setSystemRebootIntervalHour(parseInt(event.target.value));
     };
 
     const handleMqttLogKeepDaysChange = event => {
@@ -127,6 +131,10 @@ export default function SceneConfig() {
 
     const handleChannelIDPrefixChange = event => {
         setChannelIDPrefix(event.target.value);
+    };
+
+    const handleShellCmdChange = event => {
+        setShellCmd(event.target.value);
     };
 
     const handleVideoRecorderIPChange = event => {
@@ -334,53 +342,84 @@ export default function SceneConfig() {
     return (
         <div>
             <div className="page-header">
-                <h3 className="page-title">{`场地配置`}</h3>
-                <nav aria-label="breadcrumb">
+                <h3 className="page-title">{`系统设置`}</h3>
+                {/* <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item"><Link to={`/${urlPrefix}/scene`}>场地</Link></li>
                         <li className="breadcrumb-item active" aria-current="page">配置</li>
                     </ol>
-                </nav>
+                </nav> */}
             </div>
             <div className="row">
                 <div className="col-md-6 grid-margin stretch-card">
                     <div className="card">
                         <div className="card-body">
-                            <h4 className="card-title"><i className="mdi mdi-ethernet"></i>场地</h4>
+                            <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>主机信息</h4>
                             <form className="forms-sample">
                                 <Form.Group className="row">
-                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">场地名称</label>
+                                    <label htmlFor="hostName" className="col-sm-3 col-form-label">主机名</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="场地名称, 如： XXX中学高二三班"
+                                        <Form.Control type="text" className="form-control" id="hostName" placeholder="主机名， 如： ls-host-23280"
                                             value={hostIP} onChange={handlehostIPChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">端口</label>
+                                    <label htmlFor="loginUserName" className="col-sm-3 col-form-label">登录用户名</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="远程配置端口，如： 23280"
+                                        <Form.Control type="text" className="form-control" id="loginUserName"
+                                            onChange={handleRtspUserNameChange} placeholder="登录用户名" value={loginUserName} />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="loginPassword" className="col-sm-3 col-form-label">登录密码</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="password" className="form-control" id="loginPassword"
+                                            onChange={handleRtspPasswordChange} placeholder="登录密码" value={loginPassword} />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="systemRebootIntervalHour" className="col-sm-3 col-form-label">定时重启（小时）</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="systemRebootIntervalHour"
+                                            value={systemRebootIntervalHour} onChange={handleSystemRebootIntervalHourChange} placeholder="设置自动重启时间间隔" />
+                                    </div>
+                                </Form.Group>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6 grid-margin stretch-card">
+                    <div className="card">
+                        <div className="card-body">
+                            <h4 className="card-title"><i className="mdi mdi-ethernet"></i>网络配置</h4>
+                            <form className="forms-sample">
+                                <Form.Group className="row">
+                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">IP</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="IP地址, 如： 192.168.2.100"
+                                            value={hostIP} onChange={handlehostIPChange} />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">默认网关</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="默认网关，如： 192.168.2.1"
                                             value={defaultGateway} onChange={handleDefaultGatewayChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="mask" className="col-sm-3 col-form-label">地址</label>
+                                    <label htmlFor="mask" className="col-sm-3 col-form-label">子网掩码</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="mask" placeholder="地址"
+                                        <Form.Control type="text" className="form-control" id="mask" placeholder="子网掩码，如： 255.255.255.0"
                                             value={mask} onChange={handleMaskChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">GPS坐标</label>
+                                    <label htmlFor="dns" className="col-sm-3 col-form-label">DNS(逗号隔开)</label>
                                     <div className="col-sm-9">
                                         <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="如： 2450.334, 3351.34" />
-                                    </div>
-                                </Form.Group>
-                                <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">联系电话</label>
-                                    <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="座机或手机号码，如： 0755-28964567, 13954324569" />
+                                            onChange={handleDNSChange} placeholder="DNS, 如： 114.114.114.114,8.8.8.8" />
                                     </div>
                                 </Form.Group>
                                 <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyNetworkConfig}>确定</button>
@@ -391,112 +430,29 @@ export default function SceneConfig() {
                 <div className="col-md-6 grid-margin stretch-card">
                     <div className="card">
                         <div className="card-body">
-                            <h4 className="card-title"><i className="mdi mdi-video"></i>视频配置</h4>
-                            <p className="card-description">注： 通过录像机可以一次性添加多个通道，但通过摄像头添加时需一个一个单独添加，因为每个摄像头IP都不一样
+                            <h4 className="card-title"><i className="mdi mdi-video"></i>执行Shell命令</h4>
+                            <p className="card-description">注： 输入框中输入Linux Shell命令， 点击确认发送命令执行， 执行结果将于下面方框区显示
                             </p>
                             <Form.Group className="row">
-                                <label className="col-sm-3 col-form-label">取流方式</label>
-                                <div className="col-sm-4">
-                                    <div className="form-check">
-                                        <label className="form-check-label">
-                                            <input type="radio" className="form-check-input"
-                                                name="rtspSourceRecorder" id="rtspSourceRecorder"
-                                                value={RtspSourceType.VideoRecorder}
-                                                defaultChecked onChange={handleRtspSourceChange}
-                                                checked={rtspSourceType === RtspSourceType.VideoRecorder} /> 通过录像机
-                                            <i className="input-helper"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div className="col-sm-5">
-                                    <div className="form-check">
-                                        <label className="form-check-label">
-                                            <input type="radio" className="form-check-input"
-                                                name="rtspSourceCamera" id="rtspSourceCamera"
-                                                value={RtspSourceType.DirectCamera}
-                                                onChange={handleRtspSourceChange}
-                                                checked={rtspSourceType === RtspSourceType.DirectCamera} /> 通过摄像头
-                                            <i className="input-helper"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                            </Form.Group>
-                            <Form.Group className="row">
-                                <label className="col-sm-3 col-form-label">录像机品牌</label>
+                                <label htmlFor="shellCmd" className="col-sm-3 col-form-label">命令</label>
                                 <div className="col-sm-9">
-                                    <select className="form-control" onChange={handleCameraManufactureChange}>
-                                        <option value={CameraManufacture.HikVision}
-                                            selected={cameraManufacture === CameraManufacture.HikVision}>海康威视</option>
-                                        <option value={CameraManufacture.Dahua}
-                                            selected={cameraManufacture === CameraManufacture.Dahua}>大华</option>
-                                    </select>
+                                    <Form.Control type="text" className="form-control" id="shellCmd"
+                                        value={shellCmd} onChange={handleShellCmdChange}
+                                        placeholder="输入Linux Shell命令, 如ps aux | grep TKTMesh" />
                                 </div>
                             </Form.Group>
+                            <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyVideoConfig}>执行</button>
                             <Form.Group className="row">
-                                <label htmlFor="channelIDPrefix" className="col-sm-3 col-form-label">ID前缀</label>
-                                <div className="col-sm-9">
-                                    <Form.Control type="text" className="form-control" id="channelIDPrefix"
-                                        value={channelIDPrefix} onChange={handleChannelIDPrefixChange}
-                                        placeholder="如jiulong_test, 则将映射成: jiulong_test_ch0, jiulong_test_ch1, jiulong_test_ch2 ..." />
+                                {/* <label htmlFor="cmdResult" className="col-sm-3 col-form-label">执行结果</label> */}
+                                <div className="col-sm-12 mt-4" style={{ border: 'dashed 1px #CFCFCF', resize: 'both', height: '145px' }}>命令执行结果:
                                 </div>
+                                {/* <div className="col-sm-9 mt-2">
+                                    <textarea cols='50' placeholder='命令执行结果' value={''}
+                                        maxLength='120' id='cmdResult'
+                                        className=''
+                                        style={{ border: 'dashed 1px #CFCFCF', resize: 'none', height: '145px', width: '100%' }} />
+                                </div> */}
                             </Form.Group>
-                            {
-                                rtspSourceType === RtspSourceType.VideoRecorder ?
-                                    <div className="forms-sample">
-                                        <Form.Group className="row">
-                                            <label htmlFor="videoRecorderIP" className="col-sm-3 col-form-label">录像机IP</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="videoRecorderIP"
-                                                    placeholder="录像机IP" value={videoRecorderIP} onChange={handleVideoRecorderIPChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspUserName" className="col-sm-3 col-form-label">用户名</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspUserName"
-                                                    onChange={handleRtspUserNameChange} placeholder="用户名" value={rtspUserName} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspPassword" className="col-sm-3 col-form-label">密码</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspPassword"
-                                                    onChange={handleRtspPasswordChange} placeholder="密码" value={rtspPassword} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspChannels" className="col-sm-3 col-form-label">通道</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspChannels" placeholder="支持逗号隔开(1,3,5)和范围指定(1-8)两种格式"
-                                                    value={rtspChannels} onChange={handleRtspChannelsChange} />
-                                            </div>
-                                        </Form.Group>
-                                    </div> :
-                                    <div className="forms-sample">
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraIP" className="col-sm-3 col-form-label">摄像头IP</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraIP" placeholder="摄像头IP"
-                                                    value={cameraIP} onChange={handleCameraIPChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraUserName" className="col-sm-3 col-form-label">用户名</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraUserName" placeholder="用户名"
-                                                    value={cameraUserName} onChange={handleCameraUserNameChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraPassword" className="col-sm-3 col-form-label">密码</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraPassword" placeholder="密码"
-                                                    value={cameraPassword} onChange={handleCameraPasswordChange} />
-                                            </div>
-                                        </Form.Group>
-                                    </div>
-                            }
-                            <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyVideoConfig}>添加</button>
                         </div>
                     </div>
                 </div>

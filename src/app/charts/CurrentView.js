@@ -162,23 +162,6 @@ function CurrentVideoModal(props) {
       if (!videoRef.current) {
         return;
       }
-
-      // if (flvJs.isSupported()) {
-      //   const player = flvJs.createPlayer({
-      //     type: 'flv',
-      //     isLive: true,
-      //     cors: true,
-      //     hasVideo: true,
-      //     url: videoUrl,
-      //   });
-      //   if (player) {
-      //     console.log("Now load and play the video ...");
-      //     player.attachMediaElement(videoRef.current);
-      //     player.load();
-      //     player.play();
-      //   }
-      // }
-      // alert(props.videoUrl);
     }, 2500);
   });
 

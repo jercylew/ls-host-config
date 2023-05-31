@@ -16,11 +16,11 @@ class Navbar extends Component {
         <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
           <Link className="navbar-brand brand-logo" to="/">
             {/* <img src={require('../../assets/images/logo.svg')} alt="logo" /> */}
-            九龙物联数据采集平台
+            冷硕主机配置系统
           </Link>
           <Link className="navbar-brand brand-logo-mini" to="/">
             {/* <img src={require('../../assets/images/logo-mini.svg')} alt="logo" /> */}
-            九龙
+            冷硕
           </Link>
         </div>
         <div className="navbar-menu-wrapper d-flex align-items-stretch">

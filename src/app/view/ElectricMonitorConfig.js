@@ -48,7 +48,7 @@ const cameraManufactureToText = manufacture => {
 };
 
 const urlPrefix = HomeUrlPrefix();
-export default function SceneConfig() {
+export default function ElectricMonitorConfig() {
     const query = useQuery();
 
     const [userId, setUserId] = useState('');
@@ -65,8 +65,8 @@ export default function SceneConfig() {
 
     const [hostIP, setHostIP] = useState('');
     const [defaultGateway, setDefaultGateway] = useState('');
-    const [mask, setMask] = useState('');
-    const [dns, setDns] = useState('');
+    const [mask, setMask] = useState('255.255.255.0');
+    const [dns, setDns] = useState('114.114.114.114,8.8.8.8');
 
     const [rtspSourceType, setRtspSourceType] = useState(RtspSourceType.VideoRecorder);
     const [cameraManufacture, setCameraManufacture] = useState(CameraManufacture.HikVision);
@@ -334,53 +334,92 @@ export default function SceneConfig() {
     return (
         <div>
             <div className="page-header">
-                <h3 className="page-title">{`场地配置`}</h3>
-                <nav aria-label="breadcrumb">
+                <h3 className="page-title">{`电箱配置`}</h3>
+                {/* <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item"><Link to={`/${urlPrefix}/scene`}>场地</Link></li>
                         <li className="breadcrumb-item active" aria-current="page">配置</li>
                     </ol>
-                </nav>
+                </nav> */}
             </div>
             <div className="row">
                 <div className="col-md-6 grid-margin stretch-card">
                     <div className="card">
                         <div className="card-body">
-                            <h4 className="card-title"><i className="mdi mdi-ethernet"></i>场地</h4>
+                            <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>蓝牙配置</h4>
                             <form className="forms-sample">
                                 <Form.Group className="row">
-                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">场地名称</label>
+                                    <label htmlFor="timeShieldCmdMS" className="col-sm-3 col-form-label">命令接收间隔(毫秒)</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="场地名称, 如： XXX中学高二三班"
+                                        <Form.Control type="number" className="form-control" id="timeShieldCmdMS" placeholder="250"
+                                            value={timeShieldCmdMS} onChange={handleTimeShieldCmdMSChange} />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="timeIntervalDataReportS" className="col-sm-3 col-form-label">数据上报间隔(秒)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="timeIntervalDataReportS"
+                                            value={timeIntervalDataReportS} onChange={handleTimeIntervalDataReportSChange} placeholder="10" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="dataLogKeepDays" className="col-sm-3 col-form-label">数据日志缓存时间(天)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="dataLogKeepDays"
+                                            value={dataLogKeepDays} onChange={handleDataLogKeepDaysChange} placeholder="10" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="mqttLogKeepDays" className="col-sm-3 col-form-label">MQTT日志缓存时间(天)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="mqttLogKeepDays"
+                                            value={mqttLogKeepDays} onChange={handleMqttLogKeepDaysChange} placeholder="7" />
+                                    </div>
+                                </Form.Group>
+                                <div className="form-check">
+                                    <label className="form-check-label">
+                                        <input type="checkbox" className="form-check-input" checked={autoRebootWhenGatewayOff}
+                                            onChange={handleAutoRebootWhenGatewayOffChange} />
+                                        <i className="input-helper"></i>
+                                        网关断线时自动重启工控机
+                                    </label>
+                                </div>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6 grid-margin stretch-card">
+                    <div className="card">
+                        <div className="card-body">
+                            <h4 className="card-title"><i className="mdi mdi-ethernet"></i>网络配置</h4>
+                            <form className="forms-sample">
+                                <Form.Group className="row">
+                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">IP</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="IP地址, 如： 192.168.2.100"
                                             value={hostIP} onChange={handlehostIPChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">端口</label>
+                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">默认网关</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="远程配置端口，如： 23280"
+                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="默认网关，如： 192.168.2.1"
                                             value={defaultGateway} onChange={handleDefaultGatewayChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="mask" className="col-sm-3 col-form-label">地址</label>
+                                    <label htmlFor="mask" className="col-sm-3 col-form-label">子网掩码</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="mask" placeholder="地址"
+                                        <Form.Control type="text" className="form-control" id="mask" placeholder="子网掩码，如： 255.255.255.0"
                                             value={mask} onChange={handleMaskChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">GPS坐标</label>
+                                    <label htmlFor="dns" className="col-sm-3 col-form-label">DNS(逗号隔开)</label>
                                     <div className="col-sm-9">
                                         <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="如： 2450.334, 3351.34" />
-                                    </div>
-                                </Form.Group>
-                                <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">联系电话</label>
-                                    <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="座机或手机号码，如： 0755-28964567, 13954324569" />
+                                            onChange={handleDNSChange} placeholder="DNS, 如： 114.114.114.114,8.8.8.8" />
                                     </div>
                                 </Form.Group>
                                 <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyNetworkConfig}>确定</button>

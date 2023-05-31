@@ -48,7 +48,7 @@ const cameraManufactureToText = manufacture => {
 };
 
 const urlPrefix = HomeUrlPrefix();
-export default function SceneConfig() {
+export default function BleMeshOverviewConfig() {
     const query = useQuery();
 
     const [userId, setUserId] = useState('');
@@ -65,8 +65,8 @@ export default function SceneConfig() {
 
     const [hostIP, setHostIP] = useState('');
     const [defaultGateway, setDefaultGateway] = useState('');
-    const [mask, setMask] = useState('');
-    const [dns, setDns] = useState('');
+    const [mask, setMask] = useState('255.255.255.0');
+    const [dns, setDns] = useState('114.114.114.114,8.8.8.8');
 
     const [rtspSourceType, setRtspSourceType] = useState(RtspSourceType.VideoRecorder);
     const [cameraManufacture, setCameraManufacture] = useState(CameraManufacture.HikVision);
@@ -334,56 +334,42 @@ export default function SceneConfig() {
     return (
         <div>
             <div className="page-header">
-                <h3 className="page-title">{`场地配置`}</h3>
-                <nav aria-label="breadcrumb">
+                <h3 className="page-title">{`基本配置`}</h3>
+                {/* <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item"><Link to={`/${urlPrefix}/scene`}>场地</Link></li>
                         <li className="breadcrumb-item active" aria-current="page">配置</li>
                     </ol>
-                </nav>
+                </nav> */}
             </div>
             <div className="row">
-                <div className="col-md-6 grid-margin stretch-card">
+            <div className="col-md-6 grid-margin stretch-card">
                     <div className="card">
                         <div className="card-body">
-                            <h4 className="card-title"><i className="mdi mdi-ethernet"></i>场地</h4>
+                            <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>{`网关`}</h4>
                             <form className="forms-sample">
                                 <Form.Group className="row">
-                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">场地名称</label>
+                                    <label htmlFor="timeShieldCmdMS" className="col-sm-3 col-form-label">网关串口</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="场地名称, 如： XXX中学高二三班"
-                                            value={hostIP} onChange={handlehostIPChange} />
+                                        <Form.Control type="number" className="form-control" id="timeShieldCmdMS" placeholder="250"
+                                            value={timeShieldCmdMS} onChange={handleTimeShieldCmdMSChange} />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">端口</label>
+                                    <label htmlFor="timeIntervalDataReportS" className="col-sm-3 col-form-label">串口状态</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="远程配置端口，如： 23280"
-                                            value={defaultGateway} onChange={handleDefaultGatewayChange} />
+                                        <Form.Control type="number" className="form-control" id="timeIntervalDataReportS"
+                                            value={timeIntervalDataReportS} onChange={handleTimeIntervalDataReportSChange} placeholder="10" />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="mask" className="col-sm-3 col-form-label">地址</label>
+                                    <label htmlFor="dataLogKeepDays" className="col-sm-3 col-form-label">自动调度状态</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="mask" placeholder="地址"
-                                            value={mask} onChange={handleMaskChange} />
+                                        <Form.Control type="number" className="form-control" id="dataLogKeepDays"
+                                            value={dataLogKeepDays} onChange={handleDataLogKeepDaysChange} placeholder="10" />
                                     </div>
                                 </Form.Group>
-                                <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">GPS坐标</label>
-                                    <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="如： 2450.334, 3351.34" />
-                                    </div>
-                                </Form.Group>
-                                <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">联系电话</label>
-                                    <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="座机或手机号码，如： 0755-28964567, 13954324569" />
-                                    </div>
-                                </Form.Group>
-                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyNetworkConfig}>确定</button>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
                             </form>
                         </div>
                     </div>
@@ -391,112 +377,98 @@ export default function SceneConfig() {
                 <div className="col-md-6 grid-margin stretch-card">
                     <div className="card">
                         <div className="card-body">
-                            <h4 className="card-title"><i className="mdi mdi-video"></i>视频配置</h4>
-                            <p className="card-description">注： 通过录像机可以一次性添加多个通道，但通过摄像头添加时需一个一个单独添加，因为每个摄像头IP都不一样
-                            </p>
-                            <Form.Group className="row">
-                                <label className="col-sm-3 col-form-label">取流方式</label>
-                                <div className="col-sm-4">
-                                    <div className="form-check">
-                                        <label className="form-check-label">
-                                            <input type="radio" className="form-check-input"
-                                                name="rtspSourceRecorder" id="rtspSourceRecorder"
-                                                value={RtspSourceType.VideoRecorder}
-                                                defaultChecked onChange={handleRtspSourceChange}
-                                                checked={rtspSourceType === RtspSourceType.VideoRecorder} /> 通过录像机
-                                            <i className="input-helper"></i>
-                                        </label>
+                            <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>{`数据与日志`}</h4>
+                            <form className="forms-sample">
+                                <Form.Group className="row">
+                                    <label htmlFor="timeShieldCmdMS" className="col-sm-3 col-form-label">命令接收间隔(毫秒)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="timeShieldCmdMS" placeholder="250"
+                                            value={timeShieldCmdMS} onChange={handleTimeShieldCmdMSChange} />
                                     </div>
-                                </div>
-                                <div className="col-sm-5">
-                                    <div className="form-check">
-                                        <label className="form-check-label">
-                                            <input type="radio" className="form-check-input"
-                                                name="rtspSourceCamera" id="rtspSourceCamera"
-                                                value={RtspSourceType.DirectCamera}
-                                                onChange={handleRtspSourceChange}
-                                                checked={rtspSourceType === RtspSourceType.DirectCamera} /> 通过摄像头
-                                            <i className="input-helper"></i>
-                                        </label>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="timeIntervalDataReportS" className="col-sm-3 col-form-label">数据上报间隔(秒)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="timeIntervalDataReportS"
+                                            value={timeIntervalDataReportS} onChange={handleTimeIntervalDataReportSChange} placeholder="10" />
                                     </div>
-                                </div>
-                            </Form.Group>
-                            <Form.Group className="row">
-                                <label className="col-sm-3 col-form-label">录像机品牌</label>
-                                <div className="col-sm-9">
-                                    <select className="form-control" onChange={handleCameraManufactureChange}>
-                                        <option value={CameraManufacture.HikVision}
-                                            selected={cameraManufacture === CameraManufacture.HikVision}>海康威视</option>
-                                        <option value={CameraManufacture.Dahua}
-                                            selected={cameraManufacture === CameraManufacture.Dahua}>大华</option>
-                                    </select>
-                                </div>
-                            </Form.Group>
-                            <Form.Group className="row">
-                                <label htmlFor="channelIDPrefix" className="col-sm-3 col-form-label">ID前缀</label>
-                                <div className="col-sm-9">
-                                    <Form.Control type="text" className="form-control" id="channelIDPrefix"
-                                        value={channelIDPrefix} onChange={handleChannelIDPrefixChange}
-                                        placeholder="如jiulong_test, 则将映射成: jiulong_test_ch0, jiulong_test_ch1, jiulong_test_ch2 ..." />
-                                </div>
-                            </Form.Group>
-                            {
-                                rtspSourceType === RtspSourceType.VideoRecorder ?
-                                    <div className="forms-sample">
-                                        <Form.Group className="row">
-                                            <label htmlFor="videoRecorderIP" className="col-sm-3 col-form-label">录像机IP</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="videoRecorderIP"
-                                                    placeholder="录像机IP" value={videoRecorderIP} onChange={handleVideoRecorderIPChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspUserName" className="col-sm-3 col-form-label">用户名</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspUserName"
-                                                    onChange={handleRtspUserNameChange} placeholder="用户名" value={rtspUserName} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspPassword" className="col-sm-3 col-form-label">密码</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspPassword"
-                                                    onChange={handleRtspPasswordChange} placeholder="密码" value={rtspPassword} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="rtspChannels" className="col-sm-3 col-form-label">通道</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="rtspChannels" placeholder="支持逗号隔开(1,3,5)和范围指定(1-8)两种格式"
-                                                    value={rtspChannels} onChange={handleRtspChannelsChange} />
-                                            </div>
-                                        </Form.Group>
-                                    </div> :
-                                    <div className="forms-sample">
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraIP" className="col-sm-3 col-form-label">摄像头IP</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraIP" placeholder="摄像头IP"
-                                                    value={cameraIP} onChange={handleCameraIPChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraUserName" className="col-sm-3 col-form-label">用户名</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraUserName" placeholder="用户名"
-                                                    value={cameraUserName} onChange={handleCameraUserNameChange} />
-                                            </div>
-                                        </Form.Group>
-                                        <Form.Group className="row">
-                                            <label htmlFor="cameraPassword" className="col-sm-3 col-form-label">密码</label>
-                                            <div className="col-sm-9">
-                                                <Form.Control type="text" className="form-control" id="cameraPassword" placeholder="密码"
-                                                    value={cameraPassword} onChange={handleCameraPasswordChange} />
-                                            </div>
-                                        </Form.Group>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="dataLogKeepDays" className="col-sm-3 col-form-label">数据日志缓存时间(天)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="dataLogKeepDays"
+                                            value={dataLogKeepDays} onChange={handleDataLogKeepDaysChange} placeholder="10" />
                                     </div>
-                            }
-                            <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyVideoConfig}>添加</button>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="mqttLogKeepDays" className="col-sm-3 col-form-label">MQTT日志缓存时间(天)</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="mqttLogKeepDays"
+                                            value={mqttLogKeepDays} onChange={handleMqttLogKeepDaysChange} placeholder="7" />
+                                    </div>
+                                </Form.Group>
+                                <div className="form-check">
+                                    <label className="form-check-label">
+                                        <input type="checkbox" className="form-check-input" checked={autoRebootWhenGatewayOff}
+                                            onChange={handleAutoRebootWhenGatewayOffChange} />
+                                        <i className="input-helper"></i>
+                                        网关断线时自动重启工控机
+                                    </label>
+                                </div>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6 grid-margin stretch-card">
+                    <div className="card">
+                        <div className="card-body">
+                            <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>{`云服务`}</h4>
+                            <form className="forms-sample">
+                                <Form.Group className="row">
+                                    <label htmlFor="timeShieldCmdMS" className="col-sm-3 col-form-label">云服务器地址</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="timeShieldCmdMS" placeholder="250"
+                                            value={timeShieldCmdMS} onChange={handleTimeShieldCmdMSChange} />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="timeIntervalDataReportS" className="col-sm-3 col-form-label">云服务端口</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="timeIntervalDataReportS"
+                                            value={timeIntervalDataReportS} onChange={handleTimeIntervalDataReportSChange} placeholder="10" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="dataLogKeepDays" className="col-sm-3 col-form-label">MQTT服务器地址</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="dataLogKeepDays"
+                                            value={dataLogKeepDays} onChange={handleDataLogKeepDaysChange} placeholder="10" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="mqttLogKeepDays" className="col-sm-3 col-form-label">MQTT服务端口</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="mqttLogKeepDays"
+                                            value={mqttLogKeepDays} onChange={handleMqttLogKeepDaysChange} placeholder="7" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="mqttLogKeepDays" className="col-sm-3 col-form-label">MQTT数据上报主题</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="mqttLogKeepDays"
+                                            value={mqttLogKeepDays} onChange={handleMqttLogKeepDaysChange} placeholder="7" />
+                                    </div>
+                                </Form.Group>
+                                <Form.Group className="row">
+                                    <label htmlFor="mqttLogKeepDays" className="col-sm-3 col-form-label">MQTT命令下发主题</label>
+                                    <div className="col-sm-9">
+                                        <Form.Control type="number" className="form-control" id="mqttLogKeepDays"
+                                            value={mqttLogKeepDays} onChange={handleMqttLogKeepDaysChange} placeholder="7" />
+                                    </div>
+                                </Form.Group>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
+                            </form>
                         </div>
                     </div>
                 </div>
