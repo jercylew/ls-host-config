@@ -84,7 +84,7 @@ export default function ElectricMonitorConfig() {
         false, false, false, false, false
     ]);
 
-    const handleApplyBleConfig = () => {
+    const handleApplyConfig = () => {
         //TODO: MQTT publish /host/cmd/xxxxxxxxxxxx-yyyyyy
         /*
         {
@@ -104,13 +104,6 @@ export default function ElectricMonitorConfig() {
         }
         */
     };
-
-    // const handleUpdateChName = (e, index) => {
-    //     const newSettings = [...channelSettings.slice(0, index),
-    //         { ...channelSettings[index], ch_name: e.target.value },
-    //         ...channelSettings.slice(index + 1)];
-    //     setChannelSettings(newSettings);
-    // };
 
     const handleUpdateChStringSetting = (e, index, field) => {
         const newSettings = [...channelSettings.slice(0, index),
@@ -145,7 +138,7 @@ export default function ElectricMonitorConfig() {
             {
                 channelSettings.map((chSetting, index) => {
                         return (
-                            <div className="col-md-6 grid-margin stretch-card">
+                            <div className="col-md-6 grid-margin stretch-card" key={`ch-${chSetting.id}`}>
                                 <div className="card">
                                     <div className="card-body">
                                         <h4 className="card-title"><i className="mdi mdi-flash-auto"></i>{`通道${chSetting.id}`}</h4>
@@ -262,7 +255,7 @@ export default function ElectricMonitorConfig() {
                                                         </Form.Group>
                                                     </>) : null
                                             }
-                                            <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyBleConfig}>确定</button>
+                                            <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyConfig}>确定</button>
                                         </form>
                                     </div>
                                 </div>

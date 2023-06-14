@@ -27,7 +27,7 @@ const rtspSrcTypeToText = type => {
     if (type === RtspSourceType.VideoRecorder) {
         return 'recorder';
     }
-    else if (type === RtspSourceType.VideoRecorder) {
+    else if (type === RtspSourceType.DirectCamera) {
         return 'camera';
     }
     else {
@@ -51,22 +51,11 @@ const urlPrefix = HomeUrlPrefix();
 export default function SceneConfig() {
     const query = useQuery();
 
-    const [userId, setUserId] = useState('');
-
-    const [id, setId] = useState('');
-    const [gatewayId, setGatewayId] = useState('');
-    const [name, setName] = useState('');
-
-    const [timeShieldCmdMS, setTimeShieldCmdMS] = useState(500);
-    const [timeIntervalDataReportS, setTimeIntervalDataReportS] = useState(10);
-    const [dataLogKeepDays, setDataLogKeepDays] = useState(10);
-    const [mqttLogKeepDays, setMqttLogKeepDays] = useState(7);
-    const [autoRebootWhenGatewayOff, setAutoRebootWhenGatewayOff] = useState(true);
-
-    const [hostIP, setHostIP] = useState('');
-    const [defaultGateway, setDefaultGateway] = useState('');
-    const [mask, setMask] = useState('');
-    const [dns, setDns] = useState('');
+    const [sceneName, setSceneName] = useState('');
+    const [frpPort, setFrpPort] = useState('');
+    const [sceneAddress, setSceneAddress] = useState('');
+    const [gpsCoordinate, setGpsCoordinate] = useState('');
+    const [telephone, setTelephone] = useState('');
 
     const [rtspSourceType, setRtspSourceType] = useState(RtspSourceType.VideoRecorder);
     const [cameraManufacture, setCameraManufacture] = useState(CameraManufacture.HikVision);
@@ -79,45 +68,8 @@ export default function SceneConfig() {
     const [cameraUserName, setCameraUserName] = useState('');
     const [cameraPassword, setCameraPassword] = useState('');
 
-    const handleTimeShieldCmdMSChange = event => {
-        setTimeShieldCmdMS(parseInt(event.target.value));
-    };
-
-    const handleTimeIntervalDataReportSChange = event => {
-        setTimeIntervalDataReportS(parseInt(event.target.value));
-    };
-
-    const handleDataLogKeepDaysChange = event => {
-        setDataLogKeepDays(parseInt(event.target.value));
-    };
-
-    const handleMqttLogKeepDaysChange = event => {
-        setMqttLogKeepDays(parseInt(event.target.value));
-    };
-
-    const handleAutoRebootWhenGatewayOffChange = event => {
-        console.log('AutoRebootWhenGatewayOff: prev', autoRebootWhenGatewayOff);
-        setAutoRebootWhenGatewayOff(event.target.checked);
-    };
-
-    const handlehostIPChange = event => {
-        setHostIP(event.target.value);
-    };
-
-    const handleDefaultGatewayChange = event => {
-        setDefaultGateway(event.target.value);
-    };
-
-    const handleMaskChange = event => {
-        setMask(event.target.value);
-    };
-
-    const handleDNSChange = event => {
-        setDns(event.target.value);
-    };
 
     const handleRtspSourceChange = event => {
-        console.log('RTSP source: ', event.target.value);
         setRtspSourceType(parseInt(event.target.value));
     };
 
@@ -157,80 +109,22 @@ export default function SceneConfig() {
         setCameraPassword(event.target.value);
     };
 
-    const handleApplyBleConfig = () => {
-        //TODO: MQTT publish /host/cmd/xxxxxxxxxxxx-yyyyyy
-        /*
-        {
-            cmd: 'set',
-            category: 'ble',
-            params: {
-                port: '/dev/ttyUSB0',
-                autoRebootWhenGatewayOff: true,
-                commandShieldTimeMS: 3000,
-                dataReportIntervalMS: 1000,
-                dataLogKeepDays: 7,
-                mqttLogKeepDays: 10,
-                gateway_id: 200,
-                gateway_mesh_name: 'JLZN',
-                gateway_mesh_password: '1qaz',
-            }
-        }
-        */
-    };
+    const handleApplySceneConfig = () => {
+        // console.log('Trying to save network settings: ', cmdData);
+        // AxiosClient.post(`/v1/scenes/${id}`, cmdData).then(resp => {
+        //     console.log(resp);
 
-    const handleApplyNetworkConfig = () => {
-        //TODO: MQTT publish /host/cmd/xxxxxxxxxxxx-yyyyyy
-        /*
-        {
-            cmd: 'set',
-            category: 'network',
-            params: {
-                method: 'static'，
-                ip: 'xxx.xxx.xxx.xxx',
-                mask: '255.244.255.0',
-                gateway: '192.168.1.1',
-                dns: '114.114.114.114,8.8.8.8'
-            }
-        } Or
-        {
-            method: 'dhcp'
-        }
-        */
-
-        if (hostIP === '' || defaultGateway === '') {
-            alert('请输入要配的IP和网关！');
-            return;
-        }
-
-        let cmdData = {
-            user_id: userId,
-            gateway_id: gatewayId,
-            cmd: 'set',
-            category: 'network',
-            params: {
-                method: 'static',
-                ip: hostIP,
-                mask: mask,
-                gateway: defaultGateway,
-                dns: dns
-            }
-        };
-
-        console.log('Trying to save network settings: ', cmdData);
-        AxiosClient.post(`/v1/scenes/${id}`, cmdData).then(resp => {
-            console.log(resp);
-
-            let respData = resp.data;
-            if (respData.state === 0) {
-                alert('设置网络成功');
-            }
-            else {
-                alert('设置网络失败: ' + respData.message);
-            }
-        })
-            .catch(error => {
-                alert('设置网络失败: ' + error.message);
-            });
+        //     let respData = resp.data;
+        //     if (respData.state === 0) {
+        //         alert('设置网络成功');
+        //     }
+        //     else {
+        //         alert('设置网络失败: ' + respData.message);
+        //     }
+        // })
+        //     .catch(error => {
+        //         alert('设置网络失败: ' + error.message);
+        //     });
     };
 
     const handleApplyVideoConfig = () => {
@@ -270,13 +164,13 @@ export default function SceneConfig() {
             return;
         }
 
-        if (videoRecorderIP == '') {
+        if (videoRecorderIP === '') {
             alert('请输入录像机IP！');
             return;
         }
        }
        else {
-        if (cameraIP == '') {
+        if (cameraIP === '') {
             alert('请输入摄像头IP！');
             return;
         }
@@ -288,8 +182,6 @@ export default function SceneConfig() {
        }
 
         let cmdData = {
-            user_id: userId,
-            gateway_id: gatewayId,
             cmd: 'set',
             category: 'video',
             params: {
@@ -304,31 +196,30 @@ export default function SceneConfig() {
             }
         };
 
-        console.log('Trying to save video settings: ', cmdData);
-        AxiosClient.post(`/v1/scenes/${id}`, cmdData).then(resp => {
-            console.log(resp);
+        // console.log('Trying to save video settings: ', cmdData);
+        // AxiosClient.post(`/v1/scenes/${id}`, cmdData).then(resp => {
+        //     console.log(resp);
 
-            let respData = resp.data;
-            if (respData.state === 0) {
-                alert('添加视频通道成功');
-            }
-            else {
-                alert('添加视频通道失败: ' + respData.message);
-            }
-        })
-            .catch(error => {
-                alert('添加视频通道失败: ' + error.message);
-            });
+        //     let respData = resp.data;
+        //     if (respData.state === 0) {
+        //         alert('添加视频通道成功');
+        //     }
+        //     else {
+        //         alert('添加视频通道失败: ' + respData.message);
+        //     }
+        // })
+        //     .catch(error => {
+        //         alert('添加视频通道失败: ' + error.message);
+        //     });
     };
 
     useEffect(() => {
         bsCustomFileInput.init();
-        setTimeout(() => {
-            setId(query.get('id'));
-            setGatewayId(query.get('gateway_id'));
-            setName(query.get('name'));
-            setUserId('jiulong_data_platform_' + uuidv4());
-        }, 500);
+        // setTimeout(() => {
+        //     setId(query.get('id'));
+        //     setGatewayId(query.get('gateway_id'));
+        //     setUserId('jiulong_data_platform_' + uuidv4());
+        // }, 500);
     });
 
     return (
@@ -349,41 +240,41 @@ export default function SceneConfig() {
                             <h4 className="card-title"><i className="mdi mdi-ethernet"></i>场地</h4>
                             <form className="forms-sample">
                                 <Form.Group className="row">
-                                    <label htmlFor="hostIP" className="col-sm-3 col-form-label">场地名称</label>
+                                    <label htmlFor="sceneName" className="col-sm-3 col-form-label">场地名称</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="hostIP" placeholder="场地名称, 如： XXX中学高二三班"
-                                            value={hostIP} onChange={handlehostIPChange} />
+                                        <Form.Control type="text" className="form-control" id="sceneName" placeholder="场地名称, 如： XXX中学高二三班"
+                                            value={sceneName} onChange={ (event) => { setSceneName(event.target.value); } } />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="defaultGateway" className="col-sm-3 col-form-label">端口</label>
+                                    <label htmlFor="frpPort" className="col-sm-3 col-form-label">端口</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="defaultGateway" placeholder="远程配置端口，如： 23280"
-                                            value={defaultGateway} onChange={handleDefaultGatewayChange} />
+                                        <Form.Control type="text" className="form-control" id="frpPort" placeholder="远程配置端口，如： 23280"
+                                            value={frpPort} onChange={ (event) => { setFrpPort(event.target.value); } } />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="mask" className="col-sm-3 col-form-label">地址</label>
+                                    <label htmlFor="sceneAddress" className="col-sm-3 col-form-label">地址</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" className="form-control" id="mask" placeholder="地址"
-                                            value={mask} onChange={handleMaskChange} />
+                                        <Form.Control type="text" className="form-control" id="sceneAddress" placeholder="地址"
+                                            value={sceneAddress} onChange={ (event) => { setSceneAddress(sceneAddress); } } />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">GPS坐标</label>
+                                    <label htmlFor="gpsCoordinate" className="col-sm-3 col-form-label">GPS坐标</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="如： 2450.334, 3351.34" />
+                                        <Form.Control type="text" value={gpsCoordinate} className="form-control" id="gpsCoordinate"
+                                            onChange={(event) => { setGpsCoordinate(event.target.value); }} placeholder="如： 2450.334, 3351.34" />
                                     </div>
                                 </Form.Group>
                                 <Form.Group className="row">
-                                    <label htmlFor="dns" className="col-sm-3 col-form-label">联系电话</label>
+                                    <label htmlFor="telephone" className="col-sm-3 col-form-label">联系电话</label>
                                     <div className="col-sm-9">
-                                        <Form.Control type="text" value={dns} className="form-control" id="dns"
-                                            onChange={handleDNSChange} placeholder="座机或手机号码，如： 0755-28964567, 13954324569" />
+                                        <Form.Control type="text" value={telephone} className="form-control" id="telephone"
+                                            onChange={ (event) => { setTelephone(event.target.value); } } placeholder="座机或手机号码，如： 0755-28964567, 13954324569" />
                                     </div>
                                 </Form.Group>
-                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyNetworkConfig}>确定</button>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplySceneConfig}>确定</button>
                             </form>
                         </div>
                     </div>
