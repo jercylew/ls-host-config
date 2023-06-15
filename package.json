@@ -1,7 +1,7 @@
 {
   "name": "purple-react-free",
   "version": "1.1.0",
-  "homepage": "http://www.lengshuotech.com:3000/jiulong-data-platform",
+  "homepage": "http://127.0.0.1:3000/ls-host-config",
   "private": true,
   "dependencies": {
     "@mdi/font": "^4.2.95",
