@@ -226,12 +226,12 @@ export default function SceneConfig() {
         <div>
             <div className="page-header">
                 <h3 className="page-title">{`场地配置`}</h3>
-                <nav aria-label="breadcrumb">
+                {/* <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item"><Link to={`/${urlPrefix}/scene`}>场地</Link></li>
                         <li className="breadcrumb-item active" aria-current="page">配置</li>
                     </ol>
-                </nav>
+                </nav> */}
             </div>
             <div className="row">
                 <div className="col-md-6 grid-margin stretch-card">
