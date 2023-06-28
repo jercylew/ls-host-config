@@ -58,7 +58,7 @@ APP_PATH=/usr/local/ls-apps/ls-mesh-server/public/jiulong-data-platform
 echo 'Begin deploying to server'
 
 echo 'Clear old files ...'
-ssh root@${SERVER_ADDR} 'cd /usr/local/ls-apps/ls-mesh-server/public/jiulong-data-platform; ls -l;rm -rf ./*'
+# ssh root@${SERVER_ADDR} 'cd /usr/local/ls-apps/ls-mesh-server/public/jiulong-data-platform; ls -l;rm -rf ./*'
 
 if [ ! -f ./build/index.html ]; then
   echo 'App not yet built, please run `npm run build`'
@@ -67,4 +67,4 @@ fi
 echo 'Uploading files ...'
 
 cd build
-scp -rv ./* root@${SERVER_ADDR}:${APP_PATH}
+# scp -rv ./* root@${SERVER_ADDR}:${APP_PATH}
