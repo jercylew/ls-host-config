@@ -1,6 +1,6 @@
 {
   "name": "ls-host-config",
-  "packageManager": "yarn@3.6.0",
+  "packageManager": "yarn@3.6.1",
   "homepage": "http://127.0.0.1:3000/ls-host-config",
   "private": true,
   "dependencies": {

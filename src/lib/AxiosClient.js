@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const AxiosClient = axios.create({
-    //baseURL: 'http://192.168.0.54:3000/api/',
-    baseURL: 'http://www.lengshuotech.com:3000/api/',
+    baseURL: 'http://localhost/api/',   // Local debug
+    // baseURL: '/api/',                // Product
     timeout: 10000,
     headers: { 'ls-token': '1234567890abcdef' }
 });

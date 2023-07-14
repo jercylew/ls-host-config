@@ -1,163 +1,184 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import bsCustomFileInput from 'bs-custom-file-input';
 import AxiosClient from '../../lib/AxiosClient';
 
 export default function ElectricMonitorConfig() {
-    const [show, setShow] = useState(false);
+    const [warningDialogVisible, setWarningDialogVisible] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [newChName, setNewChName] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [operatingSucceed, setOperatingSucceed] = useState(true);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+    const closeWarningDialog = () => setWarningDialogVisible(false);
+    const showWarningDialog = () => setWarningDialogVisible(true);
+    const deleteChannel = (index) => {
+        closeWarningDialog();
+        AxiosClient.delete(`v1/electric-configs/channels/${channelSettings[index].id}`).then(resp => {
+            const respData = resp.data;
+            if (respData.is_succeed) {
+                showAlertSucceed(`删除通道 '${channelSettings[index].ch_name}' 成功！`);
+                refreshChannelList();
+            }
+            else {
+                showAlertFailed(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + respData.message);
+            }
+        })
+            .catch(error => {
+                showAlertFailed(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + error.message)
+            });
+    };
+
+    const refreshChannelList = () => {
+        AxiosClient.get(`v1/electric-configs/channels`)
+            .then(res => {
+                const respData = res.data
+                if (respData.is_succeed) {
+                    setChannelSettings(respData.data.channels);
+                }
+            }).catch(err => {
+                console.log(err);
+            });
+    };
+
+    const showAlertSucceed = (message) => {
+        setOperatingSucceed(true);
+        setAlertMessage(message);
+        setAlertVisible(true);
+    };
+
+    const showAlertFailed = (message) => {
+        setOperatingSucceed(false);
+        setAlertMessage(message);
+        setAlertVisible(true);
+    };
+
+    const updateChannel = (index) => {
+        const chPayload = channelSettings[index];
+
+        console.log('Trying to update channel: ', chPayload);
+        AxiosClient.put(`v1/electric-configs/channels/${chPayload.id}`, chPayload).then(resp => {
+            const respData = resp.data;
+            if (respData.is_succeed) {
+                showAlertSucceed(`更新通道 '${chPayload.ch_name}' 成功！`);
+                refreshChannelList();
+            }
+            else {
+                showAlertFailed(`更新通道 '${chPayload.ch_name}' 失败: ` + respData.message);
+            }
+        })
+            .catch(error => {
+                showAlertFailed(`更新通道 '${chPayload.ch_name}' 失败: ` + error.message)
+            });
+    };
+
+    const addNewChannel = (chName) => {
+        if (chName === '') {
+            showAlertFailed('添加通道失败，通道名不能为空！');
+            return;
+        }
+        const chPayload = {
+            ch_name: chName,
+            ch_temp_read_address: 0,
+            ch_leakcurrent_read_address: 0,
+            ch_current_read_address: 0,
+            current_allowed_range_max: 20,
+            current_info_trigger_range: '10-20',
+            current_info_trigger_duration: 30,
+            current_alarm_trigger_range: '>20',
+            current_alarm_trigger_duration: 30,
+            temp_info_trigger_range: '32-40',
+            temp_info_trigger_duration: 30,
+            temp_alarm_trigger_range: '>40',
+            temp_alarm_trigger_duration: 30,
+            leakcurrent_info_trigger_range: '32-40',
+            leakcurrent_info_trigger_duration: 30,
+            leakcurrent_alarm_trigger_range: '>40',
+            leakcurrent_alarm_trigger_duration: 30
+        };
+
+        console.log('Trying to add new channel: ', chPayload);
+        AxiosClient.post(`v1/electric-configs/channels`, chPayload).then(resp => {
+            const respData = resp.data;
+            if (respData.is_succeed) {
+                showAlertSucceed(`添加通道 '${chPayload.ch_name}' 成功！`);
+                refreshChannelList();
+            }
+            else {
+                showAlertFailed(`添加通道 '${chPayload.ch_name}' 失败: ` + respData.message);
+            }
+        })
+            .catch(error => {
+                showAlertFailed(`添加通道 '${chPayload.ch_name}' 失败: ` + error.message)
+            });
+    };
 
     //The value trigger expression format supported,
     // 'a-b': value between a and b
     // '>a': value is greater than a
     // '<a': value is smaller than a
     // Otherwise: invalid format
-    const [channelSettings, setChannelSettings] = useState([
-        {
-            id: 0,
-            ch_name: '通道0',
-            ch_temp_read_address: 2000,
-            ch_leakcurrent_read_address: 3000,
-            ch_current_read_address: 3000,
-            current_allowed_range_max: 20,
-            current_info_trigger_range: '10-20',
-            current_info_trigger_duration: 30,
-            current_alarm_trigger_range: '>20',
-            current_alarm_trigger_duration: 30,
-            temp_info_trigger_range: '32-40',
-            temp_info_trigger_duration: 30,
-            temp_alarm_trigger_range: '>40',
-            temp_alarm_trigger_duration: 30
-        },
-        {
-            id: 1,
-            ch_name: '通道1',
-            ch_temp_read_address: 2001,
-            ch_leakcurrent_read_address: 3001,
-            ch_current_read_address: 3001,
-            current_allowed_range_max: 20,
-            current_info_trigger_range: '10-20',
-            current_info_trigger_duration: 30,
-            current_alarm_trigger_range: '>20',
-            current_alarm_trigger_duration: 30,
-            temp_info_trigger_range: '32-40',
-            temp_info_trigger_duration: 30,
-            temp_alarm_trigger_range: '>40',
-            temp_alarm_trigger_duration: 30
-        },
-        {
-            id: 2,
-            ch_name: '通道2',
-            ch_temp_read_address: 2002,
-            ch_leakcurrent_read_address: 3002,
-            ch_current_read_address: 3002,
-            current_allowed_range_max: 20,
-            current_info_trigger_range: '10-20',
-            current_info_trigger_duration: 30,
-            current_alarm_trigger_range: '>20',
-            current_alarm_trigger_duration: 30,
-            temp_info_trigger_range: '32-40',
-            temp_info_trigger_duration: 30,
-            temp_alarm_trigger_range: '>40',
-            temp_alarm_trigger_duration: 30
-        },
-        {
-            id: 3,
-            ch_name: '通道3',
-            ch_temp_read_address: 2003,
-            ch_leakcurrent_read_address: 3003,
-            ch_current_read_address: 3003,
-            current_allowed_range_max: 20,
-            current_info_trigger_range: '10-20',
-            current_info_trigger_duration: 30,
-            current_alarm_trigger_range: '>20',
-            current_alarm_trigger_duration: 30,
-            temp_info_trigger_range: '32-40',
-            temp_info_trigger_duration: 30,
-            temp_alarm_trigger_range: '>40',
-            temp_alarm_trigger_duration: 30
-        },
-        {
-            id: 4,
-            ch_name: '通道4',
-            ch_temp_read_address: 2004,
-            ch_leakcurrent_read_address: 3004,
-            ch_current_read_address: 3004,
-            current_allowed_range_max: 20,
-            current_info_trigger_range: '10-20',
-            current_info_trigger_duration: 30,
-            current_alarm_trigger_range: '>20',
-            current_alarm_trigger_duration: 30,
-            temp_info_trigger_range: '32-40',
-            temp_info_trigger_duration: 30,
-            temp_alarm_trigger_range: '>40',
-            temp_alarm_trigger_duration: 30
-        }
-    ]);
+    const [channelSettings, setChannelSettings] = useState([]);
 
     const [advancedSettings, setAdvancedSettings] = useState([
         false, false, false, false, false
     ]);
 
-    const handleApplyConfig = () => {
-        //TODO: MQTT publish /host/cmd/xxxxxxxxxxxx-yyyyyy
-        /*
-        {
-            cmd: 'set',
-            category: 'ble',
-            params: {
-                port: '/dev/ttyUSB0',
-                autoRebootWhenGatewayOff: true,
-                commandShieldTimeMS: 3000,
-                dataReportIntervalMS: 1000,
-                dataLogKeepDays: 7,
-                mqttLogKeepDays: 10,
-                gateway_id: 200,
-                gateway_mesh_name: 'JLZN',
-                gateway_mesh_password: '1qaz',
-            }
-        }
-        */
-    };
-
     const handleUpdateChStringSetting = (e, index, field) => {
         const newSettings = [...channelSettings.slice(0, index),
-            { ...channelSettings[index], [field]: e.target.value },
-            ...channelSettings.slice(index + 1)];
+        { ...channelSettings[index], [field]: e.target.value },
+        ...channelSettings.slice(index + 1)];
         setChannelSettings(newSettings);
     };
 
     const handleUpdateChIntSetting = (e, index, field) => {
         const newSettings = [...channelSettings.slice(0, index),
-            { ...channelSettings[index], [field]: parseInt(e.target.value) },
-            ...channelSettings.slice(index + 1)];
+        { ...channelSettings[index], [field]: parseInt(e.target.value) },
+        ...channelSettings.slice(index + 1)];
         setChannelSettings(newSettings);
     };
 
     useEffect(() => {
         bsCustomFileInput.init();
-    });
+        refreshChannelList();
+    }, []);
 
     return (
         <>
-            <div>
+            <Alert show={alertVisible} variant={operatingSucceed ? "success" : "danger"}
+                onClose={() => setAlertVisible(false)} dismissible>
+                <Alert.Heading>{operatingSucceed ? "操作成功" : "操作失败"}</Alert.Heading>
+                <p>{alertMessage}</p>
+            </Alert>
+            <div style={{
+                height: '800px',
+                overflowY: 'scroll'
+            }}>
                 <div className="page-header">
                     <h3 className="page-title">{`电箱配置`}</h3>
-                    {/* <nav aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item"><Link to={`/${urlPrefix}/scene`}>场地</Link></li>
-                        <li className="breadcrumb-item active" aria-current="page">配置</li>
-                    </ol>
-                </nav> */}
                 </div>
-                <div className="row">
+                <form className="form-inline">
+                    <label className="sr-only" htmlFor="inlineFormChannelName">Name</label>
+                    <Form.Control type="text" className="form-control mb-2 mr-sm-2" id="inlineFormChannelName"
+                        value={newChName} onChange={(event) => { setNewChName(event.target.value); }}
+                        placeholder="通道名称" />
+                    {/* <label className="sr-only" htmlFor="inlineFormPort">Port</label>
+                    <div className="input-group mb-2 mr-sm-2">
+                        <Form.Control type="text" className="form-control" id="inlineFormPort"
+                            onChange={this.handleInputScenePortChange} placeholder="端口号" />
+                    </div> */}
+                    <button type="button" className="btn btn-gradient-primary mb-2"
+                        onClick={() => {
+                            addNewChannel(newChName);
+                        }}>添加新通道</button>
+                </form>
+                <div className="row mt-5">
                     {
-                        channelSettings.map((chSetting, index) => {
+                        channelSettings.length > 0 ? channelSettings.map((chSetting, index) => {
                             return (
                                 <div className="col-md-6 grid-margin stretch-card" key={`ch-${chSetting.id}`}>
                                     <div className="card">
@@ -166,7 +187,7 @@ export default function ElectricMonitorConfig() {
                                                 onClick={() => {
                                                     console.log('To remove channel: ', chSetting.ch_name);
                                                     setCurrentIndex(index);
-                                                    handleShow();
+                                                    showWarningDialog();
                                                 }}>
                                                 <h4 className="card-title"><i className="mdi mdi-flash-auto"></i>{`通道${chSetting.id}`}</h4>
                                                 <i className="mdi mdi-delete icon-sm text-primary align-middle"></i>
@@ -311,27 +332,68 @@ export default function ElectricMonitorConfig() {
                                                                         }} />
                                                                 </div>
                                                             </Form.Group>
+                                                            <div className='mt-1 mb-1' style={{ width: '100%', height: '1px', backgroundColor: '#78BDF5' }}></div>
+                                                            <Form.Group className="row">
+                                                                <label htmlFor={`chOverLeakCurrentInfo${chSetting.id}`} className="col-sm-3 col-form-label">漏电流（提示）</label>
+                                                                <div className="col-sm-9">
+                                                                    <Form.Control type="text" className="form-control" id={`chOverLeakCurrentInfo${chSetting.id}`} placeholder="250"
+                                                                        value={chSetting.leakcurrent_info_trigger_range} onChange={(event) => {
+                                                                            handleUpdateChStringSetting(event, index, 'leakcurrent_info_trigger_range');
+                                                                        }} />
+                                                                </div>
+                                                            </Form.Group>
+                                                            <Form.Group className="row">
+                                                                <label htmlFor={`chOverLeakCurrentInfoDuration${chSetting.id}`} className="col-sm-3 col-form-label">触发时间（秒）</label>
+                                                                <div className="col-sm-9">
+                                                                    <Form.Control type="number" className="form-control" id={`chOverLeakCurrentInfoDuration${chSetting.id}`} placeholder="250"
+                                                                        value={chSetting.leakcurrent_info_trigger_duration} onChange={(event) => {
+                                                                            handleUpdateChIntSetting(event, index, 'leakcurrent_info_trigger_duration');
+                                                                        }} />
+                                                                </div>
+                                                            </Form.Group>
+                                                            <div className='mt-1 mb-1' style={{ width: '100%', height: '1px', backgroundColor: '#78BDF5' }}></div>
+                                                            <Form.Group className="row">
+                                                                <label htmlFor={`chOverLeakCurrentAlarm${chSetting.id}`} className="col-sm-3 col-form-label">漏电流（告警）</label>
+                                                                <div className="col-sm-9">
+                                                                    <Form.Control type="text" className="form-control" id={`chOverLeakCurrentAlarm${chSetting.id}`} placeholder="250"
+                                                                        value={chSetting.leakcurrent_alarm_trigger_range} onChange={(event) => {
+                                                                            handleUpdateChStringSetting(event, index, 'leakcurrent_alarm_trigger_range');
+                                                                        }} />
+                                                                </div>
+                                                            </Form.Group>
+                                                            <Form.Group className="row">
+                                                                <label htmlFor={`chOverLeakCurrentAlarmDuration${chSetting.id}`} className="col-sm-3 col-form-label">触发时间（秒）</label>
+                                                                <div className="col-sm-9">
+                                                                    <Form.Control type="number" className="form-control" id={`chOverLeakCurrentAlarmDuration${chSetting.id}`} placeholder="250"
+                                                                        value={chSetting.leakcurrent_alarm_trigger_duration} onChange={(event) => {
+                                                                            handleUpdateChIntSetting(event, index, 'leakcurrent_alarm_trigger_duration');
+                                                                        }} />
+                                                                </div>
+                                                            </Form.Group>
                                                         </>) : null
                                                 }
-                                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyConfig}>确定</button>
+                                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={() => {
+                                                    updateChannel(index);
+                                                }}>确定</button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>)
-                        })
+                        }) : '没有通道可显示！'
                     }
                 </div>
             </div>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={warningDialogVisible} onHide={closeWarningDialog}>
                 <Modal.Header closeButton>
                     <Modal.Title>警告</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{`即将删除通道：${channelSettings[currentIndex].ch_name}，是否继续`}</Modal.Body>
+                <Modal.Body>{channelSettings.length > 0 ?
+                    `即将删除通道：${channelSettings[currentIndex].ch_name}，是否继续` : ''}</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={closeWarningDialog}>
                         取消
                     </Button>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button variant="primary" onClick={() => { deleteChannel(currentIndex); }}>
                         确定
                     </Button>
                 </Modal.Footer>
