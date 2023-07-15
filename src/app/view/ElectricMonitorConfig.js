@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
+// import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Toast from 'react-bootstrap/Toast';
 import bsCustomFileInput from 'bs-custom-file-input';
 import AxiosClient from '../../lib/AxiosClient';
 
 export default function ElectricMonitorConfig() {
     const [warningDialogVisible, setWarningDialogVisible] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [newChName, setNewChName] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
@@ -21,15 +25,20 @@ export default function ElectricMonitorConfig() {
         AxiosClient.delete(`v1/electric-configs/channels/${channelSettings[index].id}`).then(resp => {
             const respData = resp.data;
             if (respData.is_succeed) {
-                showAlertSucceed(`删除通道 '${channelSettings[index].ch_name}' 成功！`);
+                setToastMessage(`删除通道 '${channelSettings[index].ch_name}' 成功！`);
+                setToastVisible(true);
                 refreshChannelList();
             }
             else {
-                showAlertFailed(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + respData.message);
+                console.log(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + respData.message);
+                setToastMessage(`删除通道 '${channelSettings[index].ch_name}' 失败！`);
+                setToastVisible(true);
             }
         })
             .catch(error => {
-                showAlertFailed(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + error.message)
+                console.log(`删除通道 '${channelSettings[index].ch_name}' 失败: ` + error.message);
+                setToastMessage(`删除通道 '${channelSettings[index].ch_name}' 失败！`);
+                setToastVisible(true);
             });
     };
 
@@ -64,15 +73,18 @@ export default function ElectricMonitorConfig() {
         AxiosClient.put(`v1/electric-configs/channels/${chPayload.id}`, chPayload).then(resp => {
             const respData = resp.data;
             if (respData.is_succeed) {
-                showAlertSucceed(`更新通道 '${chPayload.ch_name}' 成功！`);
                 refreshChannelList();
+                setToastMessage(`更新通道 '${chPayload.ch_name}' 成功！`);
+                setToastVisible(true);
             }
             else {
-                showAlertFailed(`更新通道 '${chPayload.ch_name}' 失败: ` + respData.message);
+                setToastMessage(`更新通道 '${chPayload.ch_name}' 失败！`);
+                setToastVisible(true);
             }
         })
             .catch(error => {
-                showAlertFailed(`更新通道 '${chPayload.ch_name}' 失败: ` + error.message)
+                setToastMessage(`更新通道 '${chPayload.ch_name}' 失败！`);
+                setToastVisible(true);
             });
     };
 
@@ -154,10 +166,20 @@ export default function ElectricMonitorConfig() {
                 <Alert.Heading>{operatingSucceed ? "操作成功" : "操作失败"}</Alert.Heading>
                 <p>{alertMessage}</p>
             </Alert>
-            <div style={{
-                height: '800px',
-                overflowY: 'scroll'
-            }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Toast onClose={() => setToastVisible(false)} style={{
+                    position: 'fixed', zIndex: 3,
+                    width: '80%'
+                }}
+                    show={toastVisible} delay={500000} autohide>
+                    <Toast.Header>
+                        <strong className="mr-auto">电箱配置</strong>
+                        <small>1 mins ago</small>
+                    </Toast.Header>
+                    <Toast.Body>{toastMessage}</Toast.Body>
+                </Toast>
+            </div>
+            <div>
                 <div className="page-header">
                     <h3 className="page-title">{`电箱配置`}</h3>
                 </div>
@@ -176,7 +198,10 @@ export default function ElectricMonitorConfig() {
                             addNewChannel(newChName);
                         }}>添加新通道</button>
                 </form>
-                <div className="row mt-5">
+                <div className="row mt-5" style={{
+                    height: '465px',
+                    overflowY: 'scroll'
+                }}>
                     {
                         channelSettings.length > 0 ? channelSettings.map((chSetting, index) => {
                             return (
@@ -189,7 +214,7 @@ export default function ElectricMonitorConfig() {
                                                     setCurrentIndex(index);
                                                     showWarningDialog();
                                                 }}>
-                                                <h4 className="card-title"><i className="mdi mdi-flash-auto"></i>{`通道${chSetting.id}`}</h4>
+                                                <h4 className="card-title"><i className="mdi mdi-flash-auto"></i>{`通道${index}`}</h4>
                                                 <i className="mdi mdi-delete icon-sm text-primary align-middle"></i>
                                             </div>
 
@@ -202,10 +227,26 @@ export default function ElectricMonitorConfig() {
                                                     </div>
                                                 </Form.Group>
                                                 <Form.Group className="row">
-                                                    <label htmlFor={`currentRange${chSetting.id}`} className="col-sm-3 col-form-label">量程</label>
+                                                    <label htmlFor={`currentRangeMax${chSetting.id}`} className="col-sm-3 col-form-label">量程</label>
                                                     <div className="col-sm-9">
-                                                        <Form.Control type="text" className="form-control" id={`currentRange${chSetting.id}`} placeholder=""
-                                                            value={chSetting.current_allowed_range_max} readOnly />
+                                                        {/* <Form.Control type="text" className="form-control" id={`currentRange${chSetting.id}`} placeholder=""
+                                                            value={chSetting.current_allowed_range_max} readOnly /> */}
+                                                        <Form.Control as="select"
+                                                            id={`currentRangeMax${chSetting.id}`}
+                                                            className="mt-2"
+                                                            onChange={(event) => handleUpdateChIntSetting(event, index, 'current_allowed_range_max')}
+                                                        >
+                                                            {[
+                                                                '10',
+                                                                '15',
+                                                                '20',
+                                                                '25',
+                                                            ].map((p) => (
+                                                                <option key={p} value={p} selected={parseInt(p) === chSetting.current_allowed_range_max}>
+                                                                    {p}
+                                                                </option>
+                                                            ))}
+                                                        </Form.Control>
                                                     </div>
                                                 </Form.Group>
                                                 <Form.Group className="row">
@@ -387,7 +428,7 @@ export default function ElectricMonitorConfig() {
                 <Modal.Header closeButton>
                     <Modal.Title>警告</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{channelSettings.length > 0 ?
+                <Modal.Body>{channelSettings.length > 0 && currentIndex >= 0 && currentIndex < channelSettings.length ?
                     `即将删除通道：${channelSettings[currentIndex].ch_name}，是否继续` : ''}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={closeWarningDialog}>
