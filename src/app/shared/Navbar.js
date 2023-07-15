@@ -20,7 +20,7 @@ class Navbar extends Component {
           </Link>
           <Link className="navbar-brand brand-logo-mini" to="/">
             {/* <img src={require('../../assets/images/logo-mini.svg')} alt="logo" /> */}
-            冷硕
+            主机配置
           </Link>
         </div>
         <div className="navbar-menu-wrapper d-flex align-items-stretch">
