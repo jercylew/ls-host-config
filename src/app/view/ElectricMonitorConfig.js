@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import { Form } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
@@ -171,7 +170,7 @@ export default function ElectricMonitorConfig() {
                     position: 'fixed', zIndex: 3,
                     width: '80%'
                 }}
-                    show={toastVisible} delay={500000} autohide>
+                    show={toastVisible} delay={10000} autohide>
                     <Toast.Header>
                         <strong className="mr-auto">电箱配置</strong>
                         <small>1 mins ago</small>
