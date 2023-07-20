@@ -272,7 +272,7 @@ export default function ElectricMonitorConfig() {
                                                             <Form.Group className="row">
                                                                 <label htmlFor={`chTempReadAddress${chSetting.id}`} className="col-sm-3 col-form-label">温度读取地址</label>
                                                                 <div className="col-sm-9">
-                                                                    <Form.Control type="text" className="form-control" id={`chTempReadAddress${chSetting.id}`} placeholder=""
+                                                                    <Form.Control type="number" className="form-control" id={`chTempReadAddress${chSetting.id}`} placeholder=""
                                                                         value={chSetting.ch_temp_read_address} onChange={(event) => {
                                                                             handleUpdateChStringSetting(event, index, 'ch_temp_read_address');
                                                                         }} />
@@ -281,7 +281,7 @@ export default function ElectricMonitorConfig() {
                                                             <Form.Group className="row">
                                                                 <label htmlFor={`chLeakCurrentReadAddress${chSetting.id}`} className="col-sm-3 col-form-label">漏电流读取地址</label>
                                                                 <div className="col-sm-9">
-                                                                    <Form.Control type="text" className="form-control" id={`chLeakCurrentReadAddress${chSetting.id}`} placeholder=""
+                                                                    <Form.Control type="number" className="form-control" id={`chLeakCurrentReadAddress${chSetting.id}`} placeholder=""
                                                                         value={chSetting.ch_leakcurrent_read_address} onChange={(event) => {
                                                                             handleUpdateChStringSetting(event, index, 'ch_leakcurrent_read_address');
                                                                         }} />
@@ -290,7 +290,7 @@ export default function ElectricMonitorConfig() {
                                                             <Form.Group className="row">
                                                                 <label htmlFor={`chCurrentReadAddress${chSetting.id}`} className="col-sm-3 col-form-label">电流读取地址</label>
                                                                 <div className="col-sm-9">
-                                                                    <Form.Control type="text" className="form-control" id={`chCurrentReadAddress${chSetting.id}`} placeholder=""
+                                                                    <Form.Control type="number" className="form-control" id={`chCurrentReadAddress${chSetting.id}`} placeholder=""
                                                                         value={chSetting.ch_current_read_address} onChange={(event) => {
                                                                             handleUpdateChStringSetting(event, index, 'ch_current_read_address');
                                                                         }} />
