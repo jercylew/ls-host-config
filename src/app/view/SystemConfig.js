@@ -17,6 +17,8 @@ function useQuery() {
 const urlPrefix = HomeUrlPrefix();
 export default function SystemConfig() {
     const [hostName, setHostName] = useState('');
+    const [hostId, setHostId] = useState('');
+    const [hostKey, setHostKey] = useState('');
     const [loginUserName, setLoginUserName] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
 
@@ -39,8 +41,10 @@ export default function SystemConfig() {
     const handleApplyHostConfig = () => {
         const payload = {
             host_name: hostName,
-            login_user_name: loginUserName,
-            login_password: loginPassword,
+            // login_user_name: loginUserName,
+            // login_password: loginPassword,
+            host_id: hostId,
+            host_key: hostKey,
             system_reboot_interval_hours: systemRebootIntervalHour,
         };
 
@@ -154,8 +158,10 @@ export default function SystemConfig() {
                 const respData = res.data
                 if (respData.is_succeed) {
                     setHostName(respData.data.host_name);
-                    setLoginUserName(respData.data.login_user);
-                    setLoginPassword(respData.data.login_password);
+                    // setLoginUserName(respData.data.login_user);
+                    // setLoginPassword(respData.data.login_password);
+                    setHostId(respData.data.host_id);
+                    setHostKey(respData.data.host_key);
                     setSystemRebootIntervalHour(respData.data.auto_reboot_interval_hours);
                 }
             }).catch(err => {
@@ -202,7 +208,7 @@ export default function SystemConfig() {
                     <div className="col-md-6 grid-margin stretch-card">
                         <div className="card">
                             <div className="card-body">
-                                <h4 className="card-title"><i className="mdi mdi-bluetooth-settings"></i>主机信息</h4>
+                                <h4 className="card-title"><i className="mdi mdi-laptop"></i>主机信息</h4>
                                 <form className="forms-sample">
                                     <Form.Group className="row">
                                         <label htmlFor="hostName" className="col-sm-3 col-form-label">主机名</label>
@@ -211,7 +217,7 @@ export default function SystemConfig() {
                                                 value={hostName} onChange={handleHostNameChange} />
                                         </div>
                                     </Form.Group>
-                                    <Form.Group className="row">
+                                    {/* <Form.Group className="row">
                                         <label htmlFor="loginUserName" className="col-sm-3 col-form-label">登录用户名</label>
                                         <div className="col-sm-9">
                                             <Form.Control type="text" className="form-control" id="loginUserName"
@@ -223,6 +229,20 @@ export default function SystemConfig() {
                                         <div className="col-sm-9">
                                             <Form.Control type="password" className="form-control" id="loginPassword"
                                                 onChange={(event) => { setLoginPassword(event.target.value); }} placeholder="登录密码" value={loginPassword} />
+                                        </div>
+                                    </Form.Group> */}
+                                    <Form.Group className="row">
+                                        <label htmlFor="hostId" className="col-sm-3 col-form-label">Host Id</label>
+                                        <div className="col-sm-9">
+                                            <Form.Control type="text" className="form-control" id="hostId"
+                                                onChange={(event) => { setHostId(event.target.value); }} placeholder="Host Id" value={hostId} />
+                                        </div>
+                                    </Form.Group>
+                                    <Form.Group className="row">
+                                        <label htmlFor="hostKey" className="col-sm-3 col-form-label">Host Key</label>
+                                        <div className="col-sm-9">
+                                            <Form.Control type="text" className="form-control" id="hostKey"
+                                                onChange={(event) => { setHostKey(event.target.value); }} placeholder="Host Key" value={hostKey} />
                                         </div>
                                     </Form.Group>
                                     <Form.Group className="row">
