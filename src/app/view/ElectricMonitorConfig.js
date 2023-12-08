@@ -94,9 +94,9 @@ export default function ElectricMonitorConfig() {
         }
         const chPayload = {
             ch_name: chName,
-            ch_temp_read_address: 0,
-            ch_leakcurrent_read_address: 0,
-            ch_current_read_address: 0,
+            ch_temp_read_address: (2000 + channelSettings.length),
+            ch_leakcurrent_read_address: (3000 + channelSettings.length),
+            ch_current_read_address: (4000 + channelSettings.length),
             current_allowed_range_max: 20,
             current_info_trigger_range: '10-20',
             current_info_trigger_duration: 30,
