@@ -64,6 +64,7 @@ export default function SceneConfig() {
     const [gpsCoordinate, setGpsCoordinate] = useState('');
     const [telephone, setTelephone] = useState('');
     const [cameraChannels, setCameraChannels] = useState([]);
+    const [videoRecordStarted, setVideoRecordStarted] = useState(false)
 
     const [rtspSourceType, setRtspSourceType] = useState(RtspSourceType.VideoRecorder);
     const [cameraManufacture, setCameraManufacture] = useState(CameraManufacture.HikVision);
@@ -127,6 +128,7 @@ export default function SceneConfig() {
                 const respData = res.data
                 if (respData.is_succeed) {
                     setCameraChannels(respData.data.channels);
+                    setVideoRecordStarted(respData.data.record_started)
                 }
             }).catch(err => {
                 console.log(err);
@@ -365,6 +367,31 @@ export default function SceneConfig() {
         // });
     };
 
+    const handleStartVideoRecord = () => {
+        const payload = {
+            start_record_video: !videoRecordStarted
+        };
+
+        AxiosClient.post(`v1/scene-config/cameras/record`, payload).then(resp => {
+            const respData = resp.data;
+            if (respData.is_succeed) {
+                setToastMessage(`操作成功！`);
+                setToastVisible(true);
+                setVideoRecordStarted(respData.data.record_started)
+            }
+            else {
+                console.log(`操作失败: ${respData.message}`);
+                setToastMessage(`操作失败！`);
+                setToastVisible(true);
+            }
+        })
+            .catch(error => {
+                console.log(`操作失败: ${error.message}`);
+                setToastMessage(`操作失败！`);
+                setToastVisible(true);
+            });
+    };
+
     useEffect(() => {
         bsCustomFileInput.init();
         AxiosClient.get(`v1/scene-config/scene`)
@@ -561,7 +588,9 @@ export default function SceneConfig() {
                                             </Form.Group>
                                         </div>
                                 }
-                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleApplyVideoConfig}>添加</button>
+                                <button type="button" className="btn btn-gradient-primary mr-2" disabled onClick={handleApplyVideoConfig}>添加</button>
+                                <button type="button" className="btn btn-gradient-primary mr-2" onClick={handleStartVideoRecord}>
+                                {videoRecordStarted ? "停止视频录制" : "开启视频录制"}</button>
                             </div>
                         </div>
                     </div>

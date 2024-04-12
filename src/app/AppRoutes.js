@@ -11,6 +11,8 @@ const BleMeshDetailsConfig = lazy(() => import('./view/BleMeshDetailsConfig'));
 const ElectricMonitorConfig = lazy(() => import('./view/ElectricMonitorConfig'));
 const SystemConfig = lazy(() => import('./view/SystemConfig'));
 const SceneConfig = lazy(() => import('./view/SceneConfig'));
+// const DemoComponents = lazy(() => import('./form-elements/BasicElements'));
+// const DemoComponents = lazy(() => import('./basic-ui/Buttons'));
 
 const urlPrefix = HomeUrlPrefix();
 
@@ -38,6 +40,7 @@ class AppRoutes extends Component {
           <Route exact path={`/${urlPrefix}/ble-mesh/mesh`} component={ BleMeshDetailsConfig } />
           <Route exact path={`/${urlPrefix}/ble-mesh/advanced`} component={ BleMeshAdvancedConfig } />
           <Route exact path={`/${urlPrefix}/system`} component={ SystemConfig } />
+          {/* <Route exact path={`/${urlPrefix}/demo`} component={ DemoComponents } /> */}
           <Redirect to={`/${urlPrefix}/dashboard`} />
         </Switch>
       </Suspense>
